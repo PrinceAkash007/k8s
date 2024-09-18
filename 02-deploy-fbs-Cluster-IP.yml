@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fbs-deploy
+  namespace: akash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fbs
+  template:
+    metadata:
+      labels:
+        app: fbs
+    spec:
+      containers:
+      - name: fbs
+        image: nginxdemos/hello
+        ports:
+          - containerPort: 80
+
+--- 
+kind: Service
+apiVersion: v1
+metadata:
+  name:  fbs-svc
+  namespace: akash
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /
+spec:
+  selector:
+    app:  fbs
+  type:  ClusterIP
+  ports:
+  - name:  fbs
+    port:  80
+    targetPort:  80

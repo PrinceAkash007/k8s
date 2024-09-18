@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-fbs
+  namespace: akash
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-name: targt-ip-demo  # Specifies the name of the ALB to be created
+    alb.ingress.kubernetes.io/group.name: akash # specifies the group name that this Ingress belongs to
+    alb.ingress.kubernetes.io/group.order: '2' # traffic will directly route to the pods instead of nodes
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/ip-address-type: ipv4  # Specifies that the ALB should use IPv4 addresses
+    alb.ingress.kubernetes.io/scheme: internet-facing  # Specifies that the ALB should be public-facing
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP  # Protocol to use for health checks
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port  # Port to use for health checks (use the traffic port)
+    #alb.ingress.kubernetes.io/healthcheck-path: /  # Path to use for health checks (Defining it in service level since multiple host websites are there)
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '20'  # Interval between health checks
+    alb.ingress.kubernetes.io/success-codes: '200-399'  # HTTP status codes indicating a successful health check
+    alb.ingress.kubernetes.io/healthy-threshold-count: '2'  # Number of successful health checks before considering the target healthy
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: '5'  # Number of failed health checks before considering the target unhealthy
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'  # Specifies the ports the ALB should listen on
+    # If we specify host based ingress, we can comment this below annotation since SSL discovery will add the certificate based on the host
+    #alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:767398026487:certificate/4cc12527-f751-42ee-b5ce-f816a20105c6  # ARN of the SSL certificate to use for HTTPS
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06  # Optional: Specifies the security policy for SSL
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=3600  # Sets the idle timeout for the load balancer
+    # alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:ap-south-1:767398026487:regional/webacl/akash-acl/cce57eee-92c4-4bad-b239-da1be8eab784
+    external-dns.alpha.kubernetes.io/hostname: sample.sushmacloud.live
+spec:
+  ingressClassName: alb
+  tls:
+    - hosts:
+      - "*.sushmacloud.live"
+  rules:
+  - host: nginx.sushmacloud.live
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: fbs-svc
+            port:
+              number: 80
