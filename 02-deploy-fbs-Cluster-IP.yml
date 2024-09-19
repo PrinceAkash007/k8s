@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: fbs-deploy
   namespace: akash
+  labels:
+    app: fbs
 spec:
   replicas: 1
   selector:
@@ -15,7 +17,7 @@ spec:
     spec:
       containers:
       - name: fbs
-        image: nginx
+        image: akash2147/food-app
         ports:
           - containerPort: 80
 
