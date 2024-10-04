@@ -9,7 +9,7 @@ metadata:
     alb.ingress.kubernetes.io/group.order: '1' # traffic will directly route to the pods instead of nodes
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/ip-address-type: ipv4  # Specifies that the ALB should use IPv4 addresses
-    alb.ingress.kubernetes.io/scheme: internet  # Specifies that the ALB should be public-facing
+    alb.ingress.kubernetes.io/scheme: internet-facing  # Specifies that the ALB should be public-facing
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP  # Protocol to use for health checks
     alb.ingress.kubernetes.io/healthcheck-port: traffic-port  # Port to use for health checks (use the traffic port)
     #alb.ingress.kubernetes.io/healthcheck-path: /  # Path to use for health checks (Defining it in service level since multiple host websites are there)
